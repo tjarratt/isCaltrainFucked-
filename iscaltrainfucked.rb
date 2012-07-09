@@ -1,15 +1,17 @@
 #!/usr/bin/env ruby
 require 'uri'
+require 'json'
 require 'pony'
 require 'net/http'
-require 'rediscache'
 require 'sinatra/base'
+require File.dirname(__FILE__) + '/rediscache'
 
 class HTTPServer < Sinatra::Base
-  set :public, File.dirname(__FILE__) + '/public'
+  set :public_folder, File.dirname(__FILE__) + '/public'
   set :views, File.dirname(__FILE__) + '/views'
 
   def initialize
+    super
     RedisCache.connect
   end
 
@@ -21,7 +23,7 @@ class HTTPServer < Sinatra::Base
     @backtrace = error.backtrace.join("\n")
 
     views = File.dirname(__FILE__) + '/views'
-    email_erb = ERB.new(File.read(views + '/email.erb'))
+    email_erb = ERB.new(File.read(views + '/email.html.erb'))
     email_body = email_erb.result(binding)
 
     Pony.mail(
@@ -39,12 +41,16 @@ class HTTPServer < Sinatra::Base
     [now.year, now.month, now.day].map(&:to_s).join('')
   end
 
+  def today_regexp
+    "^#{Time.now.to_s.split(' ').first}"
+  end
+
   def json_feed_url
     URI.parse("http://sanfrancisco.giants.mlb.com/ticketing-client/json/Game.tiksrv?team_id=137&site_section=SCHEDULE&sport_id=1&start_date=#{today_str}&events=1")
   end
 
   def json_feed
-    req = Net::HTTP::Get.new(json_feed)
+    req = Net::HTTP::Get.new(json_feed_url.request_uri)
     req['Host'] = "sanfrancisco.giants.mlb.com" # hax
     req['Connection'] = 'keep-alive'
     req['X-Requested-With'] = 'XMLHttpRequest'
@@ -59,13 +65,16 @@ class HTTPServer < Sinatra::Base
 
   get '/' do
     @is_there_a_sports_today = RedisCache.get(today_str) do
-      # set headers appropriately to get response
       uri = json_feed_url
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(json_feed)
       end
-      schedule = JSON[response]
-      schedule['events']['game']['home_name_abbrev'] == 'SF'
+      schedule = JSON[response.body]
+      first_event = schedule['events']['game']
+      is_sf = first_event['home_name_abbrev'] == 'SF'
+      next_game_is_today = ! first_event['game_date'].match(today_regexp).nil?
+
+      is_sf && next_game_is_today
     end
 
     erb :index

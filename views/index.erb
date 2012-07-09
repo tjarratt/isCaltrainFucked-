@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Is Caltrain Fucked Today?</title>
+    <style type="text/css">
+      body {
+        text-align: center;
+      }
+
+      #main {
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 5em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main">
+      <h1>
+        <%= @is_there_a_sports_today ? "YEP" : "MAYBE" %>
+      </h1>
+
+      <p>
+        <%= @is_there_a_sports_today ? "Lousy SF Giants ... " : "no baseball game, but you never know ... " %>
+      </p>
+    </div>
+  </body>
+</html>
