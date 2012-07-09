@@ -16,6 +16,10 @@ class HTTPServer < Sinatra::Base
   error do
     # aww hell naw
     error = env['sinatra_error']
+    @error_type = error.class.name
+    @error_message = error.message
+    @backtrace = error.backtrace.join("\n")
+
     views = File.dirname(__FILE__) + '/views'
     email_erb = ERB.new(File.read(views + '/email.erb'))
     email_body = email_erb.result(binding)
@@ -50,8 +54,6 @@ class HTTPServer < Sinatra::Base
     req['Accept-Language'] = 'en-US,en;q=0.8'
     req['Accept-Charset'] = 'ISO-8859-1,utf-8;q=0.7,*;q=0.3'
     req['Cookie'] = 's_vi=[CS]v1|27F91CFF85013AB4-4000010960456750[CE]; stUtil_cookie=1%7C%7C1910263221341274622649; s_cc=true; s_sq=%5B%5BB%5D%5D'
-    req['If-Modified-Since'] = 'Mon, 02 Jul 2012 23:53:35 GMT'
-
     req
   end
 
