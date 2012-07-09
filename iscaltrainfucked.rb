@@ -9,6 +9,7 @@ require File.dirname(__FILE__) + '/rediscache'
 class HTTPServer < Sinatra::Base
   set :public_folder, File.dirname(__FILE__) + '/public'
   set :views, File.dirname(__FILE__) + '/views'
+  set :environment, :production
 
   def initialize
     super
@@ -17,7 +18,7 @@ class HTTPServer < Sinatra::Base
 
   error do
     # aww hell naw
-    error = env['sinatra_error']
+    error = env['sinatra.error']
     @error_type = error.class.name
     @error_message = error.message
     @backtrace = error.backtrace.join("\n")
