@@ -11,32 +11,6 @@ class HTTPServer < Sinatra::Base
   set :views, File.dirname(__FILE__) + '/views'
   set :environment, :production
 
-  def initialize
-    super
-    RedisCache.connect
-  end
-
-  error do
-    # aww hell naw
-    error = env['sinatra.error']
-    @error_type = error.class.name
-    @error_message = error.message
-    @backtrace = error.backtrace.join("\n")
-
-    views = File.dirname(__FILE__) + '/views'
-    email_erb = ERB.new(File.read(views + '/email.html.erb'))
-    email_body = email_erb.result(binding)
-
-    Pony.mail(
-      :to => 'tjarratt+crash@gmail.com',
-      :from => 'do-not-reply@iscaltrainfucked.com',
-      :subject => 'IsCaltrainFucked Broke',
-      :body => body,
-    )
-
-    erb :error
-  end
-
   def today_str
     now = Time.now
     [now.year, now.month, now.day].map(&:to_s).join('')
@@ -79,9 +53,5 @@ class HTTPServer < Sinatra::Base
     end
 
     erb :index
-  end
-
-  get '/*' do
-    not_found
   end
 end
