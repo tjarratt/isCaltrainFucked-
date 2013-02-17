@@ -1,14 +1,57 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-<head>
-  <title>Caltrain</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+  <head>
+    <title>Is Caltrain Fucked Today?</title>
+    <style type="text/css">
+      #main {
+        text-align: center;
+        position:absolute;
+        top: 30%;
+        width: 100%;
+      }
+      .top { position: relative }
+      .group {
+      padding-bottom: 15px;
+      padding-left: 145px;
+      padding-right: 145px;
+      text-align: center;
+      }
 
-<%= yield %>
+      h1 {font-size: 12em}
+      h2 {font-size: 4em}
 
-</body>
+      * {margin: 0}
+
+      html, body {
+        text-align: center;
+	      height: 100%;
+      }
+      .wrapper {
+        width: 100%;
+	      min-height: 100%;
+	      height: auto !important;
+	      height: 100%;
+	      margin: 0 auto -55px;
+      }
+
+      .footer, .push {height: 55px}
+      .footer_item { padding-left: 10px; padding-right: 10px;}
+    </style>
+  </head>
+  <body>
+
+    <div class=wrapper>
+      <div class=top>
+        <div id=main>
+          <%= yield %>
+        </div>
+      </div>
+      <div class=push></div>
+    </div>
+    <% if content_for?(:footer) %>
+      <div class=footer>
+        <%= yield(:footer) %>
+      </div>
+    <% end %>
+  </body>
 </html>
