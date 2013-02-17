@@ -37,7 +37,7 @@ class HomeController < ApplicationController
 
   def sf_giants_play_today?
     uri = sf_giants
-    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    response = Net::HTTP.start(uri.host, uri.port) do |http|
       http.request(sf_giants_json_feed)
     end
 
