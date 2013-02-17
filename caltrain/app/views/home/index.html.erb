@@ -18,13 +18,13 @@
   </head>
   <body>
     <div id="main">
-        <% if @is_there_a_sports_today %>
-          <h1>YEP</h1>
-          <p>Lousy <%= @whom %> ...</p>
-        <% else %>
-          <h2>MAYBE</h2>
-          <p>No baseball or football, but you never know...</p>
-        <% end %>
+      <h1>
+        <%= @is_there_a_sports_today ? "YEP" : "MAYBE" %>
+      </h1>
+
+      <p>
+        <%= @is_there_a_sports_today ? "Lousy SF Giants ... " : "no baseball game, but you never know ... " %>
+      </p>
     </div>
   </body>
 </html>
