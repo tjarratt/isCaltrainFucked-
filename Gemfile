@@ -5,5 +5,4 @@ gem 'pry'
 gem 'pry-nav'
 
 gem 'pony'
-gem 'redis'
-gem 'sinatra'
+gem "rails", "~> 3.2.12"
