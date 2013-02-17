@@ -48,4 +48,9 @@ class HomeController < ApplicationController
 
     return is_sf && next_game_is_today
   end
+
+  # todo: add support for 49ers
+  # fetch http://www.49ers.com/gameday/season-schedule.html
+  # look for div.game-info containing div.item-date and div.stadium
+  # check that the item-date is today and stadium is HOME
 end
