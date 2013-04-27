@@ -19,4 +19,6 @@ group :development do
   gem 'pry-nav'
 end
 
+gem 'twitter'
+gem 'sentimental'
 gem 'pony'

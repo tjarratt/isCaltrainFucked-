@@ -1,11 +1,22 @@
 require 'uri'
 require 'json'
+require 'twitter'
 require 'net/http'
+require 'sentimental'
 
 class HomeController < ApplicationController
   def index
     @is_there_a_sports_today = sf_giants_play_today?
+    @twitter_sentiment = twitter_sentiment
     @whom = 'SF Giants'
+  end
+
+  def twitter_sentiment
+    analyzer = Sentimental.new
+    tweets = Twitter.search('caltrain', :count => 10, :recent_type => 'recent').results.map(&:text)
+    sentiments = tweets.map {|t| analyzer.get_sentiment(t) }.inject(:+)
+
+    return sentiments >= 0
   end
 
   def sf_giants
