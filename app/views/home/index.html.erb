@@ -1,12 +1,12 @@
 <a href="https://github.com/tjarratt/isCaltrainFucked-"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
 
-<h1>
-  <%= @is_there_a_sports_today ? "YEP" : "MAYBE" %>
-</h1>
+<h1><%= @message %></h1>
 
-<p>
-  <%= @is_there_a_sports_today ? "Lousy SF Giants ... " : "no baseball game, but you never know ... " %>
-</p>
+<p id=message><%= @description %></p>
+
+<% @tweets.each do |tweet| %>
+<p class=tweet><%= tweet %></p>
+<% end %>
 
 <%= content_for(:footer) do %>
   <a class=footer_item href="/about">What is this about</a>

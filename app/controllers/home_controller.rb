@@ -6,17 +6,44 @@ require 'sentimental'
 
 class HomeController < ApplicationController
   def index
-    @is_there_a_sports_today = sf_giants_play_today?
-    @twitter_sentiment = twitter_sentiment
+    is_there_a_sports_today = sf_giants_play_today?
+    sentiment = twitter_sentiment
+    if is_there_a_sports_today
+      @message = 'YEP'
+      @description = 'Lousy SF Giants'
+    elsif sentiment[:fatality]
+      @message = 'YEP'
+      @description = 'Someone was hit by a train'
+    elsif sentiment[:disruption]
+      @message = 'YEP'
+      @description = 'Trains are running late'
+    elsif sentiment[:sum] <= -1
+      @message = 'PROBABLY'
+      @description = 'I hear the grumblings on twitter'
+    elsif sentiment[:sum] >= 1
+      @message = 'NOPE'
+      @description = 'Everything seems fine and dandy'
+    else
+      @message = 'Maybe'
+      @description = 'Hard to say.'
+    end
+
+    @tweets = sentiment[:tweets]
+
     @whom = 'SF Giants'
   end
 
   def twitter_sentiment
     analyzer = Sentimental.new
     tweets = Twitter.search('caltrain', :count => 10, :recent_type => 'recent').results.map(&:text)
-    sentiments = tweets.map {|t| analyzer.get_sentiment(t) }.inject(:+)
+    sentiments = tweets.map {|t| puts t.inspect; val = analyzer.get_score(t); puts val.inspect; val }.inject(:+)
 
-    return sentiments >= 0
+    return {
+      :tweets => tweets,
+      :sum => sentiments,
+      :fatality => tweets.any? {|t| t.downcase.match(/fatality/) || t.downcase.match(/death/)},
+      :disruption => tweets.any? {|t| t.downcase.match /disruption/ },
+    }
   end
 
   def sf_giants
