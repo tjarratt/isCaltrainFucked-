@@ -35,14 +35,16 @@ class HomeController < ApplicationController
 
   def twitter_sentiment
     analyzer = Sentimental.new
-    tweets = Twitter.search('caltrain', :count => 10, :recent_type => 'recent').results.map(&:text)
-    sentiments = tweets.map {|t| puts t.inspect; val = analyzer.get_score(t); puts val.inspect; val }.inject(:+)
+    tweets = Twitter.search('caltrain',
+      :count => 10,
+      :recent_type => 'recent'
+    ).results.map(&:text).map {|t| [t, analyzer.get_score(t)] }
 
     return {
       :tweets => tweets,
-      :sum => sentiments,
-      :fatality => tweets.any? {|t| t.downcase.match(/fatality/) || t.downcase.match(/death/)},
-      :disruption => tweets.any? {|t| t.downcase.match /disruption/ },
+      :sum => tweets.map(&:last).inject(:+),
+      :fatality => tweets.any? {|t| t.first.downcase.match(/fatal/) || t.first.downcase.match(/death/)},
+      :disruption => tweets.any? {|t| t.first.downcase.match /disruption/ },
     }
   end
 
