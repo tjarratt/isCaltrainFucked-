@@ -82,6 +82,10 @@ class HomeController < ApplicationController
     end
 
     schedule = JSON[response.body]
+    unless schedule && schedule['events'] && schedule['events']['game']
+      return false
+    end
+
     first_event = schedule['events']['game']
     is_sf = first_event['home_name_abbrev'] == 'SF'
     next_game_is_today = ! first_event['game_date'].match(today_regexp).nil?
