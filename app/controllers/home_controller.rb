@@ -72,7 +72,19 @@ class HomeController < ApplicationController
     req['Accept-Language'] = 'en-US,en;q=0.8'
     req['Accept-Charset'] = 'ISO-8859-1,utf-8;q=0.7,*;q=0.3'
     req['Cookie'] = 's_vi=[CS]v1|27F91CFF85013AB4-4000010960456750[CE]; stUtil_cookie=1%7C%7C1910263221341274622649; s_cc=true; s_sq=%5B%5BB%5D%5D'
-    req
+    return req
+  end
+
+  def sf_49ers_request_headers
+    req = Net::HTTP::Get.new(sf_49ers.request_uri)
+    req['Host'] = '49ers.com'
+    req['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.43 Safari/536.11'
+
+    return req
+  end
+
+  def sf_49ers_request_uri
+    @sf_49ers_uri ||= URI.parse('http://www.49ers.com/gameday/season-schedule.html')
   end
 
   def sf_giants_play_today?
@@ -93,8 +105,16 @@ class HomeController < ApplicationController
     return is_sf && next_game_is_today
   end
 
-  # todo: add support for 49ers
-  # fetch http://www.49ers.com/gameday/season-schedule.html
-  # look for div.game-info containing div.item-date and div.stadium
-  # check that the item-date is today and stadium is HOME
+  def sf_49ers_play_today?
+    uri = sf_49ers_request_uri
+    response = Net::HTTP.start(uri.host, uri.port) do |http|
+      http.request(sf_49ers_request_headers)
+    end
+
+    # TODO
+    # look for div.game-info containing div.item-date and div.stadium
+    # check that the item-date is today and stadium is HOME
+
+    return false
+  end
 end
