@@ -13,6 +13,8 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem 'httparty'
+gem 'ri_cal'
 
 group :development do
   gem 'sqlite3'

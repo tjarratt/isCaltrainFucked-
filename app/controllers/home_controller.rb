@@ -1,16 +1,21 @@
 require 'uri'
 require 'json'
+require 'ri_cal'
 require 'twitter'
+require 'tzinfo'
 require 'net/http'
+require 'httparty'
 require 'sentimental'
 
 class HomeController < ApplicationController
   def index
-    is_there_a_sports_today = sf_giants_play_today?
     sentiment = twitter_sentiment
-    if is_there_a_sports_today
+    if sf_giants_play_today?
       @message = 'YEP'
       @description = 'Lousy SF Giants'
+    elsif sf_49ers_play_today?
+      @message = 'YEP'
+      @description = 'Lousy SF 49ers'
     elsif sentiment[:fatality]
       @message = 'YEP'
       @description = 'Someone was hit by a train'
@@ -48,8 +53,8 @@ class HomeController < ApplicationController
     }
   end
 
-  def sf_giants
-    URI.parse("http://sanfrancisco.giants.mlb.com/ticketing-client/json/Game.tiksrv?team_id=137&site_section=SCHEDULE&sport_id=1&start_date=#{today_str}&events=1")
+  def sf_giants_request_uri
+    @sf_giants_uri ||= URI.parse("http://sanfrancisco.giants.mlb.com/ticketing-client/json/Game.tiksrv?team_id=137&site_section=SCHEDULE&sport_id=1&start_date=#{today_str}&events=1")
   end
 
   def today_str
@@ -62,7 +67,7 @@ class HomeController < ApplicationController
   end
 
   def sf_giants_json_feed
-    req = Net::HTTP::Get.new(sf_giants.request_uri)
+    req = Net::HTTP::Get.new(sf_giants_request_uri)
     req['Host'] = "sanfrancisco.giants.mlb.com" # hax
     req['Connection'] = 'keep-alive'
     req['X-Requested-With'] = 'XMLHttpRequest'
@@ -75,20 +80,8 @@ class HomeController < ApplicationController
     return req
   end
 
-  def sf_49ers_request_headers
-    req = Net::HTTP::Get.new(sf_49ers.request_uri)
-    req['Host'] = '49ers.com'
-    req['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.43 Safari/536.11'
-
-    return req
-  end
-
-  def sf_49ers_request_uri
-    @sf_49ers_uri ||= URI.parse('http://www.49ers.com/gameday/season-schedule.html')
-  end
-
   def sf_giants_play_today?
-    uri = sf_giants
+    uri = sf_giants_request_uri
     response = Net::HTTP.start(uri.host, uri.port) do |http|
       http.request(sf_giants_json_feed)
     end
@@ -105,16 +98,50 @@ class HomeController < ApplicationController
     return is_sf && next_game_is_today
   end
 
-  def sf_49ers_play_today?
-    uri = sf_49ers_request_uri
-    response = Net::HTTP.start(uri.host, uri.port) do |http|
-      http.request(sf_49ers_request_headers)
-    end
+  def sf_49ers_request_headers
+    req = Net::HTTP::Get.new(sf_49ers_request_url)
+    req['Host'] = '49ers.com'
+    req['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.43 Safari/536.11'
+    req['Connecton'] = 'kee-alive'
+    req['Referer'] = 'http://www.49ers.com'
+    req['Accept-Language'] = 'en-US,en;q=0.8'
+    req['Accept-Charset'] = 'ISO-8859-1,utf-8;q=0.7,*;q=0.3'
+    req['Cache-Control'] = 'no-cache'
+    req['Connection'] = 'keep-alive'
+    req['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    req['Pragma'] = 'no-cache'
+    req['DNT'] = 1
+    req['Accept-Encoding'] = 'gzip,deflate,sdch'
+    req['Accept-Language'] = 'en-US,en;q=0.8'
+    req['Cookie'] = 'adblocker=true; s_nr=1377539027203; s_lastvisit=1377658086460; s_cc=true; s_gsc=1377661156929; s_sq=%5B%5BB%5D%5D'
 
-    # TODO
-    # look for div.game-info containing div.item-date and div.stadium
-    # check that the item-date is today and stadium is HOME
-
-    return false
+    return req
   end
+
+  def sf_49ers_play_today?
+    year = Time.now.strftime('%Y')
+    ics_url = "http://www.49ers.com/cda-web/schedule-ics-module.ics?year=#{year}"
+    ics_file = HTTParty.get(ics_url)
+    now = Time.now
+
+    calendars = RiCal.parse_string(ics_file)
+    calendars.each do |cal|
+      puts "calendar"
+      cal.events.each do |event|
+        puts "event"
+        event.occurrences.each do |e|
+          puts "occurrence on #{e.start_time.to_time}"
+          # start_time = e.start_time.to_time
+          # next unless start_time.day == now.day && start_time.month == now.month
+
+          puts e.summary
+          return e.summary.match /at San Francisco/
+        end
+      end
+    end
+  end
+end
+
+def Time.get_zone(id)
+  return TZInfo::Timezone.get('America/Los_Angeles')
 end
