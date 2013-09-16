@@ -85,21 +85,28 @@ class HomeController < ApplicationController
   end
 
   def sf_giants_play_today?
-    uri = sf_giants_request_uri
-    response = Net::HTTP.start(uri.host, uri.port) do |http|
-      http.request(sf_giants_json_feed)
-    end
+    begin
+      uri = sf_giants_request_uri
+      response = Net::HTTP.start(uri.host, uri.port) do |http|
+        http.request(sf_giants_json_feed)
+      end
 
-    schedule = JSON[response.body]
-    unless schedule && schedule['events'] && schedule['events']['game']
+      schedule = JSON[response.body]
+      unless schedule && schedule['events'] && schedule['events']['game']
+        return false
+      end
+
+      first_event = schedule['events']['game']
+      is_sf = first_event['home_name_abbrev'] == 'SF'
+      next_game_is_today = ! first_event['game_date'].match(today_regexp).nil?
+
+      return is_sf && next_game_is_today
+    rescue Exception => e
+      puts "rescued an exception for sf_giants_play_today"
+      puts e.message
+      puts e.backtrace.join("\n")
       return false
     end
-
-    first_event = schedule['events']['game']
-    is_sf = first_event['home_name_abbrev'] == 'SF'
-    next_game_is_today = ! first_event['game_date'].match(today_regexp).nil?
-
-    return is_sf && next_game_is_today
   end
 
   def sf_49ers_request_headers
@@ -123,25 +130,32 @@ class HomeController < ApplicationController
   end
 
   def sf_49ers_play_today?
-    year = Time.now.strftime('%Y')
-    ics_url = "http://www.49ers.com/cda-web/schedule-ics-module.ics?year=#{year}"
-    ics_file = HTTParty.get(ics_url)
-    now = Time.now
+    begin
+      year = Time.now.strftime('%Y')
+      ics_url = "http://www.49ers.com/cda-web/schedule-ics-module.ics?year=#{year}"
+      ics_file = HTTParty.get(ics_url)
+      now = Time.now
 
-    calendars = RiCal.parse_string(ics_file)
-    calendars.each do |cal|
-      puts "calendar"
-      cal.events.each do |event|
-        puts "event"
-        event.occurrences.each do |e|
-          puts "occurrence on #{e.start_time.to_time}"
-          # start_time = e.start_time.to_time
-          # next unless start_time.day == now.day && start_time.month == now.month
+      calendars = RiCal.parse_string(ics_file)
+      calendars.each do |cal|
+        puts "calendar"
+        cal.events.each do |event|
+          puts "event"
+          event.occurrences.each do |e|
+            puts "occurrence on #{e.start_time.to_time}"
+            # start_time = e.start_time.to_time
+            # next unless start_time.day == now.day && start_time.month == now.month
 
-          puts e.summary
-          return e.summary.match /at San Francisco/
+            puts e.summary
+            return e.summary.match /at San Francisco/
+          end
         end
       end
+    rescue Exception => e
+      puts "rescued an exception for sf_49ers_play_today"
+      puts e.message
+      puts e.backtrace.join("\n")
+      return false
     end
   end
 end
