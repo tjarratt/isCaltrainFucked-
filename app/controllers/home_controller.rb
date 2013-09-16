@@ -22,6 +22,9 @@ class HomeController < ApplicationController
     elsif sentiment[:disruption]
       @message = 'YEP'
       @description = 'Trains are running late'
+    elsif sentiment[:delay]
+      @message = 'YEP'
+      @description = 'Trains are mad delayed, yo'
     elsif sentiment[:sum] <= -1
       @message = 'PROBABLY'
       @description = 'I hear the grumblings on twitter'
@@ -50,6 +53,7 @@ class HomeController < ApplicationController
       :sum => tweets.map(&:last).inject(:+),
       :fatality => tweets.any? {|t| t.first.downcase.match(/fatal/) || t.first.downcase.match(/death/)},
       :disruption => tweets.any? {|t| t.first.downcase.match /disruption/ },
+      :delay => tweets.any? {|t| t.first.downcase.match /delay/ }
     }
   end
 
