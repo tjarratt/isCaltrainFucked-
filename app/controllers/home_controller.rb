@@ -138,13 +138,10 @@ class HomeController < ApplicationController
 
       calendars = RiCal.parse_string(ics_file)
       calendars.each do |cal|
-        puts "calendar"
         cal.events.each do |event|
-          puts "event"
           event.occurrences.each do |e|
-            puts "occurrence on #{e.start_time.to_time}"
-            # start_time = e.start_time.to_time
-            # next unless start_time.day == now.day && start_time.month == now.month
+            start_time = e.start_time.to_time
+            next unless start_time.day == now.day && start_time.month == now.month
 
             puts e.summary
             return e.summary.match /at San Francisco/
