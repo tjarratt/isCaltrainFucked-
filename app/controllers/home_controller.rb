@@ -19,12 +19,12 @@ class HomeController < ApplicationController
     elsif sentiment[:fatality]
       @message = 'YEP'
       @description = 'Someone was hit by a train'
-    elsif sentiment[:disruption]
-      @message = 'YEP'
-      @description = 'Trains are running late'
     elsif sentiment[:delay]
       @message = 'YEP'
       @description = 'Trains are mad delayed, yo'
+    elsif sentiment[:disruption]
+      @message = 'YEP'
+      @description = 'Trains are running late'
     elsif sentiment[:sum] <= -1
       @message = 'PROBABLY'
       @description = 'I hear the grumblings on twitter'
