@@ -43,7 +43,7 @@ class HomeController < ApplicationController
 
   def twitter_sentiment
     analyzer = Sentimental.new
-    tweets = Twitter.search('caltrain',
+    tweets = twitter_client.search('caltrain',
       :count => 10,
       :recent_type => 'recent'
     ).results.map(&:text).map {|t| [t, analyzer.get_score(t)] }
