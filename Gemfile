@@ -22,6 +22,7 @@ group :development, :test do
   gem 'pry'
   gem 'pry-nav'
   gem 'powder'
+  gem 'dotenv-rails'
 end
 
 gem 'twitter'
