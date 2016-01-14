@@ -15,9 +15,10 @@ end
 gem 'jquery-rails'
 gem 'httparty'
 gem 'ri_cal'
+gem 'sqlite3'
 
-group :development do
-  gem 'sqlite3'
+group :development, :test do
+  gem 'rspec-rails'
   gem 'pry'
   gem 'pry-nav'
   gem 'powder'
