@@ -1,0 +1,84 @@
+{
+    "events": {
+        "game": {
+            "away_file_code": "ana",
+            "away_league_id": "103",
+            "away_league_short_spring": "Cactus",
+            "away_league_sort_spring": "51",
+            "away_name_abbrev": "LAA",
+            "away_name_full": "Los Angeles Angels",
+            "away_name_short": "LA Angels",
+            "away_name_team": "Angels",
+            "away_split_squad": "N",
+            "away_sport_id": "1",
+            "away_team_id": "108",
+            "dynamic_attribute": [
+                {
+                    "id": "46067",
+                    "name": "SGT_EVENT_IMAGE",
+                    "team_id": "137",
+                    "value": "http://kansascity.royals.mlb.com/images/homepage/team/y2011/logos/ana.png"
+                },
+                {
+                    "id": "55096",
+                    "name": "TIXGRID_IMAGE",
+                    "team_id": "137",
+                    "value": "http://mlb.mlb.com/mlb/images/ticketing/dynamic_attributes/y2015/30x30ana.png"
+                },
+                {
+                    "id": "49072",
+                    "name": "PRICING_EVENT_IMAGE",
+                    "team_id": "137",
+                    "value": "http://beta.mlb.com/mlb/images/team_logos/tixgrid/51x21/ana.gif"
+                }
+            ],
+            "game_date": "2016-03-02",
+            "game_id": "2016/03/02/anamlb-sfnmlb-1",
+            "game_number": "1",
+            "game_time": "20160302 08:05:00 PM",
+            "game_time_away": "2016-03-02T12:05:00",
+            "game_time_et": "20160302 03:05:00 PM",
+            "game_time_home": "2016-03-02T12:05:00",
+            "game_time_local": "2016-03-02T13:05:00",
+            "game_time_local_str": "2016-03-02T13:05:00",
+            "game_type": "S",
+            "gd_sw": "Y",
+            "gt_name_short": "Spring",
+            "home_file_code": "sf",
+            "home_league_id": "104",
+            "home_league_short_spring": "Cactus",
+            "home_league_sort_spring": "51",
+            "home_name_abbrev": "SF",
+            "home_name_full": "San Francisco Giants",
+            "home_name_short": "San Francisco",
+            "home_name_team": "Giants",
+            "home_split_squad": "N",
+            "home_sport_id": "1",
+            "home_team_id": "137",
+            "home_team_primary_venue": "N",
+            "home_team_spring_venue": "Y",
+            "if_necessary": "N",
+            "schedule_id": "469409",
+            "series_away_number": "1",
+            "series_game_number": "1",
+            "series_games": "1",
+            "series_home_number": "1",
+            "status": "S",
+            "ticket_link": {
+                "on_sale_end_date": "20160302 05:05:00 PM",
+                "on_sale_start_date": "20160110 01:56:00 PM",
+                "site_section": "DEFAULT",
+                "sub_category": "Default",
+                "team_id": "137",
+                "ticket_category": "TICKETS",
+                "tlink": "http://purchase.tickets.com/buy/MLBEventInfo?pid=8164195&agency=MLBST"
+            },
+            "time_zone_away": "PST",
+            "time_zone_home": "PST",
+            "time_zone_local": "MST",
+            "venue_city": "Scottsdale",
+            "venue_id": "2532",
+            "venue_name": "Scottsdale Stadium"
+        }
+    }
+}

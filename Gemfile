@@ -14,6 +14,7 @@ end
 
 gem 'jquery-rails'
 gem 'httparty'
+gem 'rest-client'
 gem 'ri_cal'
 gem 'sqlite3'
 
