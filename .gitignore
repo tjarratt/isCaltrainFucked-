@@ -2,4 +2,4 @@ bin/*
 tmp/*
 vendor
 log/development.log
-.swp
+*.swp
